@@ -92,10 +92,10 @@ export async function createMissingAccounts() {
 
           BIND(IRI(CONCAT("http://mu.semte.ch/graphs/organizations/", ?uuid)) AS ?g)
 
-          BIND(MD5(CONCAT(?bestuur,"MOCK-ACCOUNT")) as ?uuidAccount)
+          BIND(MD5(CONCAT(?uuid,"MOCK-ACCOUNT")) as ?uuidAccount)
           BIND(IRI(CONCAT("http://data.lblod.info/id/account/", ?uuidAccount)) AS ?account)
 
-          BIND(MD5(CONCAT(?bestuur,"MOCK-PERSON")) as ?uuidPerson)
+          BIND(MD5(CONCAT(?uuid,"MOCK-PERSON")) as ?uuidPerson)
           BIND(IRI(CONCAT("http://data.lblod.info/id/persoon/", ?uuidPerson)) AS ?person)
         }
         `;
