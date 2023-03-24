@@ -15,12 +15,11 @@ update-bestuurseenheid-mock-login-service:
 
 ## Configuration
 
-To configure which roles should be attributed to the administrative units of which type, a configuration file is required. The rules are an array of objects, with two properties :
+To configure which roles should be attributed to the administrative units of which type, a configuration file named `rules.json` is required. The rules are an array of objects, with two properties :
 - [required] `sessionRole`: a role to add to mock login accounts
 - [optional] `restrictToClassifications`: an array of classifications. If defined, the role will only be applied to administrative units of this classification. If not defined, the role will be applied to all the administrative units, regardless of their classification.
 
-```rules.json
-
+```
 {
   "rules": [
     {
