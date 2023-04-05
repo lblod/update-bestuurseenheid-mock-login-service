@@ -31,7 +31,8 @@ export async function createMissingAccounts() {
     ${PREFIXES}
     SELECT DISTINCT ?bestuur
     WHERE {
-      ?bestuur a besluit:Bestuurseenheid .
+      ?bestuur a besluit:Bestuurseenheid ;
+        besluit:classificatie|org:classification ?classification .
 
       FILTER NOT EXISTS { ?person foaf:member ?bestuur . }
     }
