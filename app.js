@@ -3,10 +3,6 @@ import { CronJob } from 'cron';
 import { CRON_PATTERN } from './config';
 import { deleteDanglingAccounts, createMissingAccounts } from './queries';
 
-app.get('/', function( req, res ) {
-  res.send('Hello mu-javascript-template');
-} );
-
 new CronJob(CRON_PATTERN, async function() {
   const now = new Date().toISOString();
   console.log(`Mock-login accounts healing triggered by cron job at ${now}`);
@@ -15,10 +11,10 @@ new CronJob(CRON_PATTERN, async function() {
   } catch (err) {
     console.log(`An error occurred during mock-login accounts healing at ${now}: ${err}`)
   }
-}, null, true); 
+}, null, true);
 
 /**
- * 
+ *
  */
 async function healMockLoginAccounts() {
   try {
@@ -29,5 +25,19 @@ async function healMockLoginAccounts() {
 
   }
 }
+
+app.get('/', function( req, res ) {
+  res.send('Hello mu-javascript-template');
+} );
+
+
+app.post("/heal-mock-logins", async function( req, res ) {
+  console.log(`Mock-login accounts healing triggered by manual job`);
+  try {
+    await healMockLoginAccounts();
+  } catch (err) {
+    console.log(`An error occurred during mock-login accounts healing triggered by manual job: ${err}`);
+  }
+});
 
 app.use(errorHandler);
