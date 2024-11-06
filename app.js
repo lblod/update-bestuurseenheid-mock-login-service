@@ -35,6 +35,7 @@ app.post("/heal-mock-logins", async function( req, res ) {
   console.log(`Mock-login accounts healing triggered by manual job`);
   try {
     await healMockLoginAccounts();
+    return res.status(200).json({ message: 'Healing done' });
   } catch (err) {
     console.log(`An error occurred during mock-login accounts healing triggered by manual job: ${err}`);
   }
