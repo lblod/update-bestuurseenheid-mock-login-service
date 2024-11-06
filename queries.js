@@ -41,67 +41,89 @@ export async function createMissingAccounts() {
 
   if (result.results.bindings.length) {
     for (const bestuur of result.results.bindings.map(res => res.bestuur.value)) {
-      for (const rule of rules) {
-        let valuesFilter = '';
-        if (rule.restrictToClassifications && rule.restrictToClassifications.length) {
-          valuesFilter = `
-            VALUES ?classification {
-              <${rule.restrictToClassifications.join('> <')}>
+
+      const qGetClassifications = `
+       ${PREFIXES}
+       SELECT DISTINCT ?classification WHERE {
+         VALUES ?bestuur {
+           ${sparqlEscapeUri(bestuur)}
+         }
+
+        ?bestuur a besluit:Bestuurseenheid ;
+          besluit:classificatie|org:classification ?classification .
+       }`;
+
+      const rGetClassifications = await query(qGetClassifications);
+      const classifications = rGetClassifications.results.bindings.map(res => res.classification.value);
+
+      const roles = [];
+
+      for(const classification of classifications) {
+
+        for(const rule of rules) {
+          // No restrictions, hence we can add the role.
+          if(!rule.restrictToClassifications || rule.restrictToClassifications.length == 0) {
+            roles.push(rule.sessionRole);
+          }
+          else {
+            // Find matching role
+            if(rule.restrictToClassifications.some(c => c == classification)) {
+              roles.push(rule.sessionRole);
             }
-          `;
-        }
-
-        const u = `
-        ${PREFIXES}
-        INSERT {
-          GRAPH <http://mu.semte.ch/graphs/public> {
-            ?person a foaf:Person ;
-              mu:uuid ?uuidPerson ;
-              foaf:account ?account ;
-              foaf:familyName ?label ;
-              foaf:firstName ?classificationLabel ;
-              foaf:member ${sparqlEscapeUri(bestuur)} .
-
-            ?account a foaf:OnlineAccount ;
-              mu:uuid ?uuidAccount ;
-              ext:sessionRole ${sparqlEscapeString(rule.sessionRole)} ;
-              foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> .
-          }
-          GRAPH ?g {
-            ?person a foaf:Person ;
-              mu:uuid ?uuidPerson ;
-              foaf:account ?account ;
-              foaf:familyName ?label ;
-              foaf:firstName ?classificationLabel ;
-              foaf:member ${sparqlEscapeUri(bestuur)} .
-
-            ?account a foaf:OnlineAccount ;
-              mu:uuid ?uuidAccount ;
-              ext:sessionRole ${sparqlEscapeString(rule.sessionRole)} ;
-              foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> .
           }
         }
-        WHERE {
-          ${sparqlEscapeUri(bestuur)} a besluit:Bestuurseenheid ;
-            mu:uuid ?uuid ;
-            skos:prefLabel ?label ;
-            besluit:classificatie|org:classification ?classification .
-
-          ${valuesFilter}
-
-          ?classification skos:prefLabel ?classificationLabel .
-
-          BIND(IRI(CONCAT("http://mu.semte.ch/graphs/organizations/", ?uuid)) AS ?g)
-
-          BIND(MD5(CONCAT(?uuid,"MOCK-ACCOUNT")) as ?uuidAccount)
-          BIND(IRI(CONCAT("http://data.lblod.info/id/account/", ?uuidAccount)) AS ?account)
-
-          BIND(MD5(CONCAT(?uuid,"MOCK-PERSON")) as ?uuidPerson)
-          BIND(IRI(CONCAT("http://data.lblod.info/id/persoon/", ?uuidPerson)) AS ?person)
-        }
-        `;
-        await update(u);
       }
+
+      const rolesStrings = roles.map(r => sparqlEscapeString(r)).join(',');
+
+      const u = `
+      ${PREFIXES}
+      INSERT {
+        GRAPH <http://mu.semte.ch/graphs/public> {
+          ?person a foaf:Person ;
+            mu:uuid ?uuidPerson ;
+            foaf:account ?account ;
+            foaf:familyName ?label ;
+            foaf:firstName ?classificationLabel ;
+            foaf:member ${sparqlEscapeUri(bestuur)} .
+
+          ?account a foaf:OnlineAccount ;
+            mu:uuid ?uuidAccount ;
+            foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+            ext:sessionRole ${rolesStrings}.
+        }
+        GRAPH ?g {
+          ?person a foaf:Person ;
+            mu:uuid ?uuidPerson ;
+            foaf:account ?account ;
+            foaf:familyName ?label ;
+            foaf:firstName ?classificationLabel ;
+            foaf:member ${sparqlEscapeUri(bestuur)} .
+
+          ?account a foaf:OnlineAccount ;
+            mu:uuid ?uuidAccount ;
+            foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+            ext:sessionRole ${rolesStrings}.
+        }
+      }
+      WHERE {
+        ${sparqlEscapeUri(bestuur)} a besluit:Bestuurseenheid ;
+          mu:uuid ?uuid ;
+          skos:prefLabel ?label ;
+          besluit:classificatie|org:classification ?classification .
+
+        ?classification skos:prefLabel ?classificationLabel .
+
+        BIND(IRI(CONCAT("http://mu.semte.ch/graphs/organizations/", ?uuid)) AS ?g)
+
+        BIND(MD5(CONCAT(?uuid,"MOCK-ACCOUNT")) as ?uuidAccount)
+        BIND(IRI(CONCAT("http://data.lblod.info/id/account/", ?uuidAccount)) AS ?account)
+
+        BIND(MD5(CONCAT(?uuid,"MOCK-PERSON")) as ?uuidPerson)
+        BIND(IRI(CONCAT("http://data.lblod.info/id/persoon/", ?uuidPerson)) AS ?person)
+      }`;
+
+      await update(u);
     }
   }
 }
