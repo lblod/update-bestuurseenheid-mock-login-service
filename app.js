@@ -1,6 +1,6 @@
 import { app, errorHandler } from 'mu';
 import { CronJob } from 'cron';
-import { CRON_PATTERN } from './config';
+import { CRON_PATTERN, RUN_CRON_ON_START } from './config';
 import { deleteDanglingAccounts, createMissingAccounts } from './queries';
 
 new CronJob(CRON_PATTERN, async function() {
@@ -11,7 +11,7 @@ new CronJob(CRON_PATTERN, async function() {
   } catch (err) {
     console.log(`An error occurred during mock-login accounts healing at ${now}: ${err}`)
   }
-}, null, true);
+}, null, true, null, null, RUN_CRON_ON_START);
 
 /**
  *

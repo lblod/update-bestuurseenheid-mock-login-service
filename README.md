@@ -44,3 +44,4 @@ To configure which roles should be attributed to the administrative units of whi
 ## Environment variables
 
 - `CRON_PATTERN`: The cron pattern definning when the healing happens. Defaults to `0 0 * * * *` (every hour)
+- `RUN_CRON_ON_START`: Run the cronjob at startup. Defaults to `false`
