@@ -1,6 +1,6 @@
 import { updateSudo as update, querySudo as query } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeUri } from 'mu';
-import { PREFIXES } from './config';
+import { GROUP_TYPE, PREFIXES } from './config';
 import { rules } from '/config/rules';
 
 export async function deleteDanglingAccounts() {
@@ -20,7 +20,7 @@ export async function deleteDanglingAccounts() {
 
         ?account ?paccount ?oaccount .
       }
-      FILTER NOT EXISTS { ?bestuur a besluit:Bestuurseenheid . }
+      FILTER NOT EXISTS { ?bestuur a ${GROUP_TYPE} . }
     }
   `;
   await update(q);
@@ -31,7 +31,7 @@ export async function createMissingAccounts() {
     ${PREFIXES}
     SELECT DISTINCT ?bestuur
     WHERE {
-      ?bestuur a besluit:Bestuurseenheid ;
+      ?bestuur a ${GROUP_TYPE} ;
         besluit:classificatie|org:classification ?classification .
 
       FILTER NOT EXISTS { ?person foaf:member ?bestuur . }
@@ -49,7 +49,7 @@ export async function createMissingAccounts() {
             ${sparqlEscapeUri(bestuur)}
           }
 
-        ?bestuur a besluit:Bestuurseenheid ;
+        ?bestuur a ${GROUP_TYPE} ;
           besluit:classificatie|org:classification ?classification .
         }`;
 
@@ -106,7 +106,7 @@ export async function createMissingAccounts() {
           }
         }
         WHERE {
-          ${sparqlEscapeUri(bestuur)} a besluit:Bestuurseenheid ;
+          ${sparqlEscapeUri(bestuur)} a ${GROUP_TYPE} ;
             mu:uuid ?uuid ;
             skos:prefLabel ?label ;
             besluit:classificatie|org:classification ?classification .
