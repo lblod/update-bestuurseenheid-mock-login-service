@@ -41,7 +41,12 @@ To configure which roles should be attributed to the administrative units of whi
 
 ```
 
-## Environment variables
+## Environment Variables
 
-- `CRON_PATTERN`: The cron pattern definning when the healing happens. Defaults to `0 0 * * * *` (every hour)
-- `RUN_CRON_ON_START`: Run the cronjob at startup. Defaults to `false`
+This project uses the following environment variables:
+
+| Variable        | Description                                                                                      | Default Value                                                | Required |
+|-----------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------|----------|
+| CRON_PATTERN    | The cron pattern defining when the healing happens.                                              | `0 0 * * * *` (every hour)                                   | No       |
+| RUN_CRON_ON_START | Run the cronjob at startup.                                                                    | `false`                                                      | No       |
+| GROUP_TYPE      | Used as the `rdf:type` of the group related to the mock login account.                   | `http://data.vlaanderen.be/ns/besluit#Bestuurseenheid`       | No       |
