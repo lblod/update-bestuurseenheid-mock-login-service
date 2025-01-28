@@ -1,5 +1,6 @@
 export const CRON_PATTERN = process.env.CRON_PATTERN || '0 0 * * * *'; // every hour
 export const RUN_CRON_ON_START = process.env.RUN_CRON_ON_START || false;
+export const GROUP_TYPE = process.env.GROUP_TYPE || "besluit:Bestuurseenheid";
 
 export const PREFIXES = `
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
