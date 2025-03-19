@@ -1,7 +1,11 @@
 import { app, errorHandler } from 'mu';
 import { CronJob } from 'cron';
 import { CRON_PATTERN, RUN_CRON_ON_START } from './config';
-import { deleteDanglingAccounts, createMissingAccounts } from './queries';
+import {
+  deleteDanglingAccounts,
+  createMissingAccounts,
+  updateMismatchingNames
+} from './queries';
 
 new CronJob(CRON_PATTERN, async function() {
   const now = new Date().toISOString();
@@ -20,6 +24,7 @@ async function healMockLoginAccounts() {
   try {
     await deleteDanglingAccounts();
     await createMissingAccounts();
+    await updateMismatchingNames();
   } catch (err) {
     console.log(`An error occurred: ${err}`);
 

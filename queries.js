@@ -129,3 +129,29 @@ export async function createMissingAccounts() {
     }
   }
 }
+
+export async function updateMismatchingNames() {
+  const q = `
+    ${PREFIXES}
+    DELETE {
+      GRAPH ?g {
+        ?person <http://xmlns.com/foaf/0.1/familyName> ?nameAccount .
+      }
+    } INSERT {
+      GRAPH ?g {
+        ?person <http://xmlns.com/foaf/0.1/familyName> ?nameBestuur .
+      }
+    } WHERE {
+      GRAPH ?g {
+        ?person a <http://xmlns.com/foaf/0.1/Person> ;
+          foaf:member ?bestuur ;
+          <http://xmlns.com/foaf/0.1/familyName> ?nameAccount .
+      }
+      GRAPH <http://mu.semte.ch/graphs/public> {
+        ?bestuur skos:prefLabel ?nameBestuur
+      }
+      FILTER (?nameAccount != ?nameBestuur)
+    }
+  `;
+  await update(q);
+}
