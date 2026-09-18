@@ -1,6 +1,6 @@
 import { updateSudo as update, querySudo as query } from '@lblod/mu-auth-sudo';
 import { sparqlEscapeString, sparqlEscapeUri } from 'mu';
-import { GROUP_TYPE, PREFIXES } from './config';
+import { ACCOUNT_SERVICE_HOMEPAGE, GROUP_TYPE, PREFIXES } from './config';
 import { rules } from '/config/rules';
 
 export async function deleteDanglingAccounts() {
@@ -88,7 +88,7 @@ export async function createMissingAccounts() {
 
             ?account a foaf:OnlineAccount ;
               mu:uuid ?uuidAccount ;
-              foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+              foaf:accountServiceHomepage <${ACCOUNT_SERVICE_HOMEPAGE}> ;
               ext:sessionRole ${rolesStrings}.
           }
           GRAPH ?g {
@@ -101,7 +101,7 @@ export async function createMissingAccounts() {
 
             ?account a foaf:OnlineAccount ;
               mu:uuid ?uuidAccount ;
-              foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+              foaf:accountServiceHomepage <${ACCOUNT_SERVICE_HOMEPAGE}> ;
               ext:sessionRole ${rolesStrings}.
           }
         }

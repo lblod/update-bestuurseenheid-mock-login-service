@@ -1,6 +1,7 @@
 export const CRON_PATTERN = process.env.CRON_PATTERN || '0 0 * * * *'; // every hour
 export const RUN_CRON_ON_START = process.env.RUN_CRON_ON_START == "true" ? true : false;
 export const GROUP_TYPE = process.env.GROUP_TYPE || "besluit:Bestuurseenheid";
+export const ACCOUNT_SERVICE_HOMEPAGE = process.env.ACCOUNT_SERVICE_HOMEPAGE || "https://github.com/lblod/mock-login-service";
 
 export const PREFIXES = `
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>

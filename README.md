@@ -50,3 +50,4 @@ This project uses the following environment variables:
 | CRON_PATTERN    | The cron pattern defining when the healing happens.                                              | `0 0 * * * *` (every hour)                                   | No       |
 | RUN_CRON_ON_START | Run the cronjob at startup.                                                                    | `false`                                                      | No       |
 | GROUP_TYPE      | Used as the `rdf:type` of the group related to the mock login account.                   | `http://data.vlaanderen.be/ns/besluit#Bestuurseenheid`       | No       |
+| ACCOUNT_SERVICE_HOMEPAGE | URI used as `foaf:accountServiceHomepage` of the mock login accounts.          | `https://github.com/lblod/mock-login-service`                | No       |
